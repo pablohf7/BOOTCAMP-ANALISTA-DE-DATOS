@@ -1,0 +1,62 @@
+Microsoft Windows [Versión 10.0.22621.4317]
+(c) Microsoft Corporation. Todos los derechos reservados.
+
+C:\Users\Pablo Gomez>psql -h localhost -p 5432 -U postgres
+Contraseña para usuario postgres:
+
+psql (17.0)
+ADVERTENCIA: El código de página de la consola (850) difiere del código
+            de página de Windows (1252).
+            Los caracteres de 8 bits pueden funcionar incorrectamente.
+            Vea la página de referencia de psql «Notes for Windows users»
+            para obtener más detalles.
+Digite «help» para obtener ayuda.
+
+postgres=# CREATE DATABASE desafiopablogomez096;
+CREATE DATABASE
+postgres=# \c desafiopablogomez096;
+Ahora está conectado a la base de datos «desafiopablogomez096» con el usuario «postgres».
+desafiopablogomez096=# CREATE TABLE cliente(
+desafiopablogomez096(# email VARCHAR(50),
+desafiopablogomez096(# nombre VARCHAR,
+desafiopablogomez096(# teléfono VARCHAR(16),
+desafiopablogomez096(# empresa VARCHAR(50),
+desafiopablogomez096(# prioridad SMALLINT
+desafiopablogomez096(# );
+CREATE TABLE
+desafiopablogomez096=# INSERT INTO cliente
+desafiopablogomez096-# (email, nombre, teléfono, empresa, prioridad)
+desafiopablogomez096-# VALUES
+desafiopablogomez096-# (‘luis@komatsu.com’, ‘Luis’, ‘0991982239’, ‘Komatsu’, 1),
+desafiopablogomez096-# (‘pedro@cecuamaq.com’, ’Pedro’, ’0991873456’,’Cecuamaq’, 2),
+desafiopablogomez096-# (‘pedro@cecuamaq.com’, ’Pedro’, ’0991873456’,’Cecuamaq’, 2),
+desafiopablogomez096-# (‘daniel@master.com’, ‘Daniel’, ’0991652987’, ‘Master’, 4),
+desafiopablogomez096-# (‘kevin@proto.com’, ‘Kevin’, ‘0992349823’, ‘Proto’, 5),
+desafiopablogomez096-# (‘marcelo@nirsa.com’, ‘Marcelo’, ‘0993456789’, ‘Nirsa’, 6),
+desafiopablogomez096-# (‘geovany@nipex.com’, ‘Geovany’, ‘0994563920’, ‘Nipex’, 7),
+desafiopablogomez096-# (‘christopher@dynamox.com’, ‘Christopher’, ‘0993452987’, ‘Dynamox’, 8),
+desafiopablogomez096-# (‘alberto@fluker.com’, ‘Alberto’, ‘0994672908’, ‘Fluker’, 9),
+desafiopablogomez096-# (‘pablo@hikmicro.com’, ‘Pablo’, ‘0993564098’, ‘Hikmicro’, 10)
+desafiopablogomez096-# ;
+INSERT 0 10
+desafiopablogomez096=# SELECT * FROM cliente WHERE prioridad IN(1,2,3);
+       email        | nombre |  teléfono  | empresa  | prioridad
+--------------------+--------+------------+----------+-----------
+ luis@komatsu.com   | Luis   | 0991982239 | Komatsu  |         1
+ pedro@cecuamaq.com | Pedro  | 0991873456 | Cecuamaq |         2
+ pedro@cecuamaq.com | Pedro  | 0991873456 | Cecuamaq |         2
+(3 filas)
+
+
+desafiopablogomez096=# SELECT * FROM cliente WHERE prioridad > 5;
+          email          |   nombre    |  teléfono  | empresa  | prioridad
+-------------------------+-------------+------------+----------+-----------
+ marcelo@nirsa.com       | Marcelo     | 0993456789 | Nirsa    |         6
+ geovany@nipex.com       | Geovany     | 0994563920 | Nipex    |         7
+ christopher@dynamox.com | Christopher | 0993452987 | Dynamox  |         8
+ alberto@fluker.com      | Alberto     | 0994672908 | Fluker   |         9
+ pablo@hikmicro.com      | Pablo       | 0993564098 | Hikmicro |        10
+(5 filas)
+
+
+desafiopablogomez096=#
