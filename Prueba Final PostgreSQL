@@ -1,1 +1,142 @@
+-- Prueba Final PostgreSQL - Pablo Gomez
+-- 1) Revisa el tipo de relación y crea el modelo correspondiente. Respeta las claves
+-- primarias, foráneas y tipos de datos.
 
+CREATE TABLE peliculas(
+id SERIAL PRIMARY KEY,
+nombre VARCHAR(255),
+anno INTEGER 
+);
+
+CREATE TABLE tags(
+id SERIAL PRIMARY KEY,
+tag VARCHAR(32)
+)
+
+CREATE TABLE peliculas_tags(
+pelicula_id INTEGER,
+tag_id INTEGER,
+PRIMARY KEY (pelicula_id, tag_id),
+FOREIGN KEY (pelicula_id) REFERENCES peliculas(id),
+FOREIGN KEY (tag_id) REFERENCES tags(id)
+);
+
+-- 2)Inserta 5 películas y 5 tags; la primera película debe tener 3 tags asociados, la
+-- segunda película debe tener 2 tags asociados.
+
+INSERT INTO peliculas(nombre, anno)
+VALUES
+('Avatar', 2009),('Titanic', 1997),('Frozen', 2013),('Minions', 2015),('Gladiator', 2000);
+
+INSERT INTO tags(tag)
+VALUES
+('tag1'),('tag2'),('tag3'),('tag4'),('tag5');
+
+INSERT INTO peliculas_tags(pelicula_id,tag_id)
+VALUES
+(1,1),(1,2),(1,5),(2,3),(2,4);
+
+SELECT * FROM peliculas;
+SELECT * FROM tags;
+SELECT * FROM peliculas_tags;
+
+DROP TABLE peliculas;
+DROP TABLE tags;
+DROP TABLE peliculas_tags;
+
+-- 3)Cuenta la cantidad de tags que tiene cada película. Si una película no tiene tags debe mostrar 0.
+SELECT p.nombre, COUNT(pt.tag_id) AS cant
+FROM peliculas p
+LEFT JOIN peliculas_tags pt
+ON p.id = pt.pelicula_id
+GROUP BY p.nombre
+ORDER BY cant DESC;
+
+-- 4)Crea las tablas correspondientes respetando los nombres, tipos, claves primarias y 
+-- foráneas y tipos de datos.
+
+CREATE TABLE preguntas(
+id SERIAL PRIMARY KEY,
+pregunta VARCHAR(225),
+respuesta_correcta VARCHAR
+);
+
+CREATE TABLE usuarios(
+id SERIAL PRIMARY KEY,
+nombre VARCHAR(225),
+edad INTEGER
+);
+
+CREATE TABLE respuestas(
+id SERIAL PRIMARY KEY,
+respuesta VARCHAR(255),
+usuario_id INTEGER,
+pregunta_id INTEGER,
+FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
+FOREIGN KEY (pregunta_id)REFERENCES preguntas(id)
+);
+
+-- 5)Agrega 5 usuarios y 5 preguntas.
+
+INSERT INTO usuarios(nombre,edad)
+VALUES
+('Alberto', 44 ),
+('Carlos', 35),
+('Ramon', 29),
+('Pedro', 27),
+('Antonio', 30);
+
+INSERT INTO preguntas(pregunta,respuesta_correcta)
+VALUES
+('¿Los datos estructurados se organizan en tablas?','si'),
+('¿La regresión logística es una técnica de análisis de texto?','no'),
+('¿El formato CSV es comúnmente usado para almacenar datos?','si'),
+('¿La visualización de datos siempre utiliza gráficos de barras?','no'),
+('¿La limpieza de datos es un paso esencial en el análisis de datos?','si');
+
+--a. La primera pregunta debe estar respondida correctamente dos veces, por dos usuarios diferentes.
+--b. La segunda pregunta debe estar contestada correctamente solo por un usuario.
+--c. Las otras dos preguntas deben tener respuestas incorrectas.
+
+INSERT INTO respuestas(respuesta,usuario_id,pregunta_id)
+VALUES
+('si',1,1),
+('si',2,1),
+('no',3,2),
+('no',4,3),
+('si',4,4);
+
+-- 6)Cuenta la cantidad de respuestas correctas totales por usuario (independiente de la pregunta).
+
+SELECT r.usuario_id, COUNT(p.respuesta_correcta) AS cant_respuestas_correctas
+FROM respuestas r
+LEFT JOIN preguntas p
+ON p.id = r.pregunta_id
+WHERE p.respuesta_correcta = r.respuesta
+GROUP BY r.usuario_id
+
+-- 7)Por cada pregunta, en la tabla preguntas, cuenta cuántos usuarios respondieron.
+
+SELECT COUNT(r.usuario_id) AS cant_usuarios_resp_correctas, p.id as id_pregunta, p.pregunta
+FROM preguntas p
+LEFT JOIN respuestas r
+ON r.pregunta_id = p.id
+WHERE p.respuesta_correcta = r.respuesta
+GROUP BY p.id;
+
+-- 8)Implementa un borrado en cascada de las respuestas al borrar un usuario. Prueba la
+-- implementación borrando el primer usuario.
+
+ALTER TABLE respuestas DROP CONSTRAINT respuestas_usuario_id_fkey;
+ALTER TABLE respuestas ADD CONSTRAINT respuestas_usuario_id_fkey FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE;
+
+DELETE FROM usuarios WHERE id=1;
+
+-- 9)Crea una restricción que impida insertar usuarios menores de 18 años en la base de datos.
+
+ALTER TABLE usuarios ADD CONSTRAINT chk_edad CHECK (edad >=18);
+
+-- 10)Altera la tabla existente de usuarios agregando el campo email. Debe tener la restricción de ser único.
+
+ALTER TABLE usuarios ADD COLUMN email VARCHAR(255) UNIQUE;
+ 
